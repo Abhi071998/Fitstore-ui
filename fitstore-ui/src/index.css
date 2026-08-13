@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Design tokens ── */
+:root {
+  /* color */
+  --bg: #ddeeff;
+  --surface: #c8e0f5;
+  --surface2: #b8d4ee;
+  --fg: #0d1f35;
+  --fg-muted: #3a5470;
+  --accent: #1a4f8a;
+  --accent-dark: #0f3460;
+  --accent-warm: #e8531a;
+  --border: rgba(13, 31, 53, 0.12);
+
+  /* feedback colors, needed for admin CRUD screens */
+  --success: #1e9e5a;
+  --danger: #c8392a;
+  --white: #ffffff;
+
+  /* type */
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* shape / motion */
+  --radius: 4px;
+  --radius-lg: 6px;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Base ── */
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Typography ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+h1 { font-size: clamp(32px, 3.5vw, 44px); }
+h2 { font-size: 26px; }
+h3 { font-size: 20px; }
+h4 { font-size: 17px; }
+
+em { font-style: italic; color: var(--accent-warm); }
+
+p { color: var(--fg-muted); }
+
+a { color: var(--accent); text-decoration: none; }
+
+/* Small uppercase tracked label — section/field eyebrows, table headers */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+  font-weight: 600;
+}
+
+/* Small uppercase tracked label, muted — metadata/captions (category, stat labels) */
+.label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+
+/* Opt in to the serif display font without pulling in a heading's size/weight — for
+   inline or non-heading elements (brand marks, stat numbers, ticker text) */
+.font-display { font-family: var(--font-serif); }
+
+/* ── Buttons ── */
+.btn-primary,
+.btn-outline,
+.btn-subtle,
+.btn-ghost {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  padding: 12px 28px;
+}
+.btn-primary:hover { background: var(--accent-warm); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-outline {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 10px 24px;
+}
+.btn-outline:hover { border-color: var(--accent-warm); background: var(--accent-warm); color: var(--white); }
+
+/* Quieter variant — secondary in-context actions (e.g. "Add" on a product card)
+   that shouldn't compete with a page's primary/outline CTAs */
+.btn-subtle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  padding: 10px 24px;
+}
+.btn-subtle:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 79, 138, 0.06); }
+
+.btn-danger {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 10px 24px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background 0.2s, color 0.2s;
+}
+.btn-danger:hover { background: var(--danger); color: var(--white); }
+
+.btn-ghost {
+  background: none;
+  border: none;
+  color: var(--fg-muted);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-ghost:hover { color: var(--fg); }
+.btn-ghost::after { content: '→'; transition: transform 0.2s; }
+.btn-ghost:hover::after { transform: translateX(4px); }
+
+/* Size modifier — combine with a variant class, e.g. class="btn-outline btn-sm" */
+.btn-sm { padding: 8px 14px; font-size: 10px; }
+
+/* Circular icon-only button — pagination arrows, close buttons, step controls */
+.btn-icon {
+  width: 44px; height: 44px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--fg);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+.btn-icon:hover { border-color: var(--accent); background: var(--accent); color: var(--white); transform: scale(1.05); }
+.btn-icon:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* ── Cards / panels ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(26, 79, 138, 0.15);
+}
+.card-body { padding: 20px 24px 24px; }
+
+/* status pill — stock level, discount %, active/inactive */
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--white);
+}
+.tag-warm { background: var(--accent-warm); }
+.tag-success { background: var(--success); }
+.tag-danger { background: var(--danger); }

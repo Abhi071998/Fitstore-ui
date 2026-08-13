@@ -1,13 +1,7 @@
-import { useState } from 'react'
-import './App.css'
+import Landing from './components/pages/Landing.jsx'
 
 function App() {
-
-  return (
-    <>
-      
-    </>
-  )
+  return <Landing />
 }
 
 export default App
