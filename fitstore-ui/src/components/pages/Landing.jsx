@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import AuthMenu from '../common/AuthMenu.jsx'
 import './Landing.css'
 
 const PRODUCTS = [
@@ -83,13 +84,10 @@ const FEATURES = [
   { icon: '🧵', title: 'Built to Last', desc: 'Reinforced stitching engineered for high-intensity training.' },
 ]
 
-const NAV_LINKS = ['New In', 'Train', 'Recover', 'Accessories', 'Sale']
-
 export default function Landing() {
   const [slide, setSlide] = useState(0)
   const [likes, setLikes] = useState({})
   const [step, setStep] = useState({ offset: 0, visible: 3 })
-  const [menuOpen, setMenuOpen] = useState(false)
   const trackRef = useRef(null)
 
   // Card width/visible-count vary per breakpoint (CSS controls the sizing),
@@ -136,22 +134,11 @@ export default function Landing() {
           <span>Performance Edit</span>
         </a>
 
-        <ul className={`navbar-links${menuOpen ? ' open' : ''}`}>
-          {NAV_LINKS.map((link) => (
-            <li key={link}><a href="#" onClick={() => setMenuOpen(false)}>{link}</a></li>
-          ))}
-        </ul>
+        <a href="#" className="navbar-category font-display">Discover Categories</a>
 
         <div className="navbar-actions">
+          <AuthMenu />
           <button className="btn-outline">Bag (0)</button>
-          <button
-            className="btn-icon navbar-toggle"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
         </div>
       </nav>
 

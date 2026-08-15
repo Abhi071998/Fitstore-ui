@@ -1,0 +1,112 @@
+/* ── Auth menu (Login / Sign Up) ── */
+.auth-wrap { position: relative; }
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.auth-link:hover { color: var(--accent); }
+
+.auth-divider {
+  font-size: 12px;
+  color: var(--border);
+}
+
+.auth-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 300px;
+  padding: 24px;
+  background: var(--white);
+  box-shadow: 0 20px 48px rgba(13, 31, 53, 0.18);
+  z-index: 110;
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--fg-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.auth-tab:hover { color: var(--fg); }
+.auth-tab.active { color: var(--accent); border-color: var(--accent-warm); }
+
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+
+.auth-field { display: flex; flex-direction: column; gap: 6px; }
+
+.auth-field input {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+}
+
+.auth-field input::placeholder { color: var(--fg-muted); opacity: 0.6; }
+.auth-field input:focus { outline: none; border-color: var(--accent); }
+
+.auth-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: -4px;
+}
+
+.auth-submit { width: 100%; margin-top: 4px; padding: 12px; }
+.auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-switch {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-switch button:hover { color: var(--accent-warm); }
+
+@media (max-width: 1000px) {
+  .auth-panel { width: calc(100vw - 40px); right: -20px; }
+}
