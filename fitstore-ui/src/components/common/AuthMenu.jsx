@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { loginUser, registerUser, clearAuthError, logout } from '../../store/authSlice'
+import { loginUser, registerUser, clearAuthError, logout } from '../../store/auth/authSlice'
 import './AuthMenu.css'
 
 const EMPTY_FORM = { name: '', email: '', password: '', confirmPassword: '' }

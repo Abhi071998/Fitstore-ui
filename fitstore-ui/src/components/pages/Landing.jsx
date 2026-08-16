@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import AuthMenu from '../common/AuthMenu.jsx'
 import './Landing.css'
 
@@ -134,7 +135,7 @@ export default function Landing() {
           <span>Performance Edit</span>
         </a>
 
-        <a href="#" className="navbar-category font-display">Discover Categories</a>
+        <Link to="/categories" className="navbar-category font-display">Discover Categories</Link>
 
         <div className="navbar-actions">
           <AuthMenu />
