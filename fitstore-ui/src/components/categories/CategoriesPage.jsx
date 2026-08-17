@@ -46,7 +46,12 @@ export default function CategoriesPage() {
         {status === 'succeeded' && items.length > 0 && (
           <div className="categories-grid">
             {items.map((category) => (
-              <div key={category.id} className="category-card card">
+              <Link
+                key={category.id}
+                to={`/products/${category.id}`}
+                state={{ categoryName: category.name }}
+                className="category-card card"
+              >
                 <div className="category-card-image-wrap">
                   {category.image_url ? (
                     <img src={category.image_url} alt={category.name} />
@@ -57,7 +62,7 @@ export default function CategoriesPage() {
                 <div className="card-body">
                   <h3 className="card-name">{category.name}</h3>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
