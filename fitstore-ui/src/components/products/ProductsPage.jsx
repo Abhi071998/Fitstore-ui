@@ -2,18 +2,11 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { fetchProductsByCategory } from '../../store/products/productsSlice'
+import { firstImage } from './productImages'
+import Navbar from '../common/Navbar.jsx'
 import '../pages/Landing.css'
 import '../categories/CategoriesPage.css'
 import './ProductsPage.css'
-
-function firstImage(product) {
-  try {
-    const images = JSON.parse(product.images || '[]')
-    return images[0] || null
-  } catch {
-    return null
-  }
-}
 
 export default function ProductsPage() {
   const { categoryId } = useParams()
@@ -29,13 +22,7 @@ export default function ProductsPage() {
 
   return (
     <div className="categories-page">
-      <nav className="navbar">
-        <Link to="/" className="navbar-logo font-display">
-          FITstore
-          <span>Performance Edit</span>
-        </Link>
-        <Link to="/categories" className="navbar-category font-display">All Categories</Link>
-      </nav>
+      <Navbar centerLabel="All Categories" centerTo="/categories" />
 
       <section className="section categories-section">
         <div className="section-header">
@@ -62,7 +49,12 @@ export default function ProductsPage() {
             {items.map((product) => {
               const image = firstImage(product)
               return (
-                <div key={product.id} className="product-tile card">
+                <Link
+                  key={product.id}
+                  to={`/products/${categoryId}/${product.id}`}
+                  state={{ product }}
+                  className="product-tile card"
+                >
                   <div className="category-card-image-wrap">
                     {image ? (
                       <img src={image} alt={product.name} />
@@ -85,7 +77,7 @@ export default function ProductsPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>

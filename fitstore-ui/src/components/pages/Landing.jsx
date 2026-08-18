@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import AuthMenu from '../common/AuthMenu.jsx'
+import Navbar from '../common/Navbar.jsx'
 import './Landing.css'
 
 const PRODUCTS = [
@@ -128,20 +127,7 @@ export default function Landing() {
 
   return (
     <div className="landing">
-      {/* ── Navbar ── */}
-      <nav className="navbar">
-        <a href="#" className="navbar-logo font-display">
-          FITstore
-          <span>Performance Edit</span>
-        </a>
-
-        <Link to="/categories" className="navbar-category font-display">Discover Categories</Link>
-
-        <div className="navbar-actions">
-          <AuthMenu />
-          <button className="btn-outline">Bag (0)</button>
-        </div>
-      </nav>
+      <Navbar centerLabel="Discover Categories" centerTo="/categories" showActions />
 
       {/* ── Hero ── */}
       <section className="hero">

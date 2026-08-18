@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { fetchCategories } from '../../store/categories/categoriesSlice'
+import Navbar from '../common/Navbar.jsx'
 import '../pages/Landing.css'
 import './CategoriesPage.css'
 
@@ -15,13 +16,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="categories-page">
-      <nav className="navbar">
-        <Link to="/" className="navbar-logo font-display">
-          FITstore
-          <span>Performance Edit</span>
-        </Link>
-        <Link to="/" className="navbar-category font-display">Back to Shop</Link>
-      </nav>
+      <Navbar centerLabel="Back to Shop" centerTo="/" />
 
       <section className="section categories-section">
         <div className="section-header">

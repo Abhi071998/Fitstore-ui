@@ -4,4 +4,5 @@
   gap: 24px;
 }
 
+.product-tile { display: block; color: inherit; text-decoration: none; cursor: pointer; }
 .product-tile .card-footer { justify-content: flex-start; gap: 10px; }
