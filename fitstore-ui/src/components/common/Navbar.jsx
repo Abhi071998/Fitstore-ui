@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import AuthMenu from './AuthMenu.jsx'
 import './Navbar.css'
 
 export default function Navbar({ centerLabel, centerTo, showActions = false }) {
+  const itemCount = useSelector((state) => state.cart.itemCount)
+
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo font-display">
@@ -15,7 +18,7 @@ export default function Navbar({ centerLabel, centerTo, showActions = false }) {
       {showActions && (
         <div className="navbar-actions">
           <AuthMenu />
-          <button className="btn-outline">Bag (0)</button>
+          <Link to="/bag" className="btn-outline">Bag ({itemCount})</Link>
         </div>
       )}
     </nav>

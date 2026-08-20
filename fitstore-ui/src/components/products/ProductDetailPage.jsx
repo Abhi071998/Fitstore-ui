@@ -1,20 +1,37 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { fetchProductsByCategory } from '../../store/products/productsSlice'
+import { addToBag, fetchBag, clearAddError } from '../../store/cart/cartSlice'
 import { parseImages } from './productImages'
 import Navbar from '../common/Navbar.jsx'
 import '../pages/Landing.css'
 import '../categories/CategoriesPage.css'
 import './ProductDetailPage.css'
 
+function parseFailedSizes(message) {
+  const match = message?.match(/size\(s\):\s*(.+)$/i)
+  if (!match) return []
+  return match[1].split(',').map((s) => s.trim())
+}
+
 export default function ProductDetailPage() {
   const { categoryId, productId } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { items, status, error } = useSelector((state) => state.products)
+  const token = useSelector((state) => state.auth.token)
+  const { addStatus, addError } = useSelector((state) => state.cart)
   const [activeImage, setActiveImage] = useState(0)
   const [quantities, setQuantities] = useState({})
+  const [justAdded, setJustAdded] = useState(false)
+
+  useEffect(() => {
+    if (!justAdded) return
+    const timeout = setTimeout(() => setJustAdded(false), 3000)
+    return () => clearTimeout(timeout)
+  }, [justAdded])
 
   const fromState = location.state?.product
   const fromStore = items.find((item) => String(item.id) === productId)
@@ -53,6 +70,7 @@ export default function ProductDetailPage() {
   const hasDiscount = product.mrp && product.mrp !== product.selling_price
 
   const updateQty = (size, delta) => {
+    if (addError) dispatch(clearAddError())
     setQuantities((prev) => {
       const next = Math.min(size.stock, Math.max(0, (prev[size.id] || 0) + delta))
       return { ...prev, [size.id]: next }
@@ -60,6 +78,29 @@ export default function ProductDetailPage() {
   }
 
   const totalSelected = Object.values(quantities).reduce((sum, qty) => sum + qty, 0)
+  const submitting = addStatus === 'loading'
+  const failedSizes = addStatus === 'failed' && addError?.status !== 401 ? parseFailedSizes(addError?.message) : []
+
+  const handleAddToBag = async () => {
+    if (!token) {
+      navigate('/')
+      return
+    }
+
+    const bagItems = product.sizes
+      .filter((s) => (quantities[s.id] || 0) > 0)
+      .map((s) => ({ size: s.size, quantity: quantities[s.id] }))
+
+    const result = await dispatch(addToBag({ productId: product.id, items: bagItems, token }))
+
+    if (result.meta.requestStatus === 'fulfilled') {
+      setQuantities({})
+      setJustAdded(true)
+      dispatch(fetchBag(token))
+    } else if (result.payload?.status === 401) {
+      navigate('/')
+    }
+  }
 
   return (
     <div className="categories-page">
@@ -115,11 +156,15 @@ export default function ProductDetailPage() {
                 {product.sizes.map((s) => {
                   const qty = quantities[s.id] || 0
                   const outOfStock = s.stock === 0
+                  const hasFailed = failedSizes.includes(s.size)
                   return (
-                    <div key={s.id} className={`product-detail-size-row${outOfStock ? ' out-of-stock' : ''}`}>
+                    <div
+                      key={s.id}
+                      className={`product-detail-size-row${outOfStock ? ' out-of-stock' : ''}${hasFailed ? ' size-error' : ''}`}
+                    >
                       <span className="product-detail-size-name">{s.size}</span>
                       <span className="product-detail-size-stock">
-                        {outOfStock ? 'Out of stock' : `${s.stock} available`}
+                        {hasFailed ? 'Insufficient stock' : outOfStock ? 'Out of stock' : `${s.stock} available`}
                       </span>
                       <div className="qty-stepper">
                         <button
@@ -149,10 +194,19 @@ export default function ProductDetailPage() {
 
           <button
             className="btn-primary product-detail-cta"
-            disabled={product.sizes?.length > 0 && totalSelected === 0}
+            disabled={(product.sizes?.length > 0 && totalSelected === 0) || submitting}
+            onClick={handleAddToBag}
           >
-            Add to Bag{totalSelected > 0 ? ` (${totalSelected})` : ''}
+            {submitting ? 'Adding…' : `Add to Bag${totalSelected > 0 ? ` (${totalSelected})` : ''}`}
           </button>
+
+          {justAdded && <p className="product-detail-add-success">Added to bag!</p>}
+
+          {addStatus === 'failed' && addError?.status !== 401 && (
+            <p className="product-detail-add-error">
+              {addError?.message || 'Something went wrong adding this to your bag.'}
+            </p>
+          )}
 
           {specs.length > 0 && (
             <div className="product-detail-specs">
