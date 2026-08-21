@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { addBagItemsRequest, getBagRequest } from './cartAPI'
+import { addBagItemsRequest, getBagRequest, deleteBagItemRequest } from './cartAPI'
 
 export const addToBag = createAsyncThunk(
   'cart/addToBag',
@@ -23,12 +23,26 @@ export const fetchBag = createAsyncThunk(
   },
 )
 
+export const removeBagItem = createAsyncThunk(
+  'cart/removeBagItem',
+  async ({ id, token }, { rejectWithValue }) => {
+    try {
+      await deleteBagItemRequest(id, token)
+      return id
+    } catch (err) {
+      return rejectWithValue({ id, status: err.status, message: err.message })
+    }
+  },
+)
+
 const initialState = {
   items: [],
   itemCount: 0,
   addStatus: 'idle', // idle | loading | succeeded | failed
   addError: null,
   fetchStatus: 'idle',
+  removingId: null,
+  removeError: null,
 }
 
 const cartSlice = createSlice({
@@ -37,6 +51,15 @@ const cartSlice = createSlice({
   reducers: {
     clearAddError(state) {
       state.addError = null
+    },
+    clearCart(state) {
+      state.items = []
+      state.itemCount = 0
+      state.addStatus = 'idle'
+      state.addError = null
+      state.fetchStatus = 'idle'
+      state.removingId = null
+      state.removeError = null
     },
   },
   extraReducers: (builder) => {
@@ -63,8 +86,22 @@ const cartSlice = createSlice({
       .addCase(fetchBag.rejected, (state) => {
         state.fetchStatus = 'failed'
       })
+      .addCase(removeBagItem.pending, (state, action) => {
+        state.removingId = action.meta.arg.id
+        state.removeError = null
+      })
+      .addCase(removeBagItem.fulfilled, (state, action) => {
+        const removedRow = state.items.find((row) => row.id === action.payload)
+        state.items = state.items.filter((row) => row.id !== action.payload)
+        state.itemCount -= removedRow?.quantity || 0
+        state.removingId = null
+      })
+      .addCase(removeBagItem.rejected, (state, action) => {
+        state.removingId = null
+        state.removeError = action.payload
+      })
   },
 })
 
-export const { clearAddError } = cartSlice.actions
+export const { clearAddError, clearCart } = cartSlice.actions
 export default cartSlice.reducer

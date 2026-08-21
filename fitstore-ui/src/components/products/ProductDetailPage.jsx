@@ -15,6 +15,25 @@ function parseFailedSizes(message) {
   return match[1].split(',').map((s) => s.trim())
 }
 
+function AccordionItem({ title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen)
+
+  return (
+    <div className="accordion-item">
+      <button
+        type="button"
+        className="accordion-header"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        <span>{title}</span>
+        <span className={`accordion-icon${open ? ' open' : ''}`}>+</span>
+      </button>
+      {open && <div className="accordion-content">{children}</div>}
+    </div>
+  )
+}
+
 export default function ProductDetailPage() {
   const { categoryId, productId } = useParams()
   const location = useLocation()
@@ -208,19 +227,34 @@ export default function ProductDetailPage() {
             </p>
           )}
 
-          {specs.length > 0 && (
-            <div className="product-detail-specs">
-              <span className="label">Specifications</span>
-              <dl>
-                {specs.map(([key, value]) => (
-                  <div key={key} className="product-detail-spec-row">
-                    <dt>{key}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          )}
+          <div className="accordion">
+            <AccordionItem title="Details">
+              {specs.length > 0 ? (
+                <dl className="product-detail-spec-list">
+                  {specs.map(([key, value]) => (
+                    <div key={key} className="product-detail-spec-row">
+                      <dt>{key}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p>No additional details available for this product.</p>
+              )}
+            </AccordionItem>
+
+            <AccordionItem title="Reviews">
+              <p>No reviews yet. Be the first to review this product.</p>
+            </AccordionItem>
+
+            <AccordionItem title="Delivery">
+              <p>Free shipping on orders over ₹999. Delivered in 3–5 business days.</p>
+            </AccordionItem>
+
+            <AccordionItem title="Returns">
+              <p>Returns accepted within 30 days of delivery. Items must be unused, unwashed, and with original tags.</p>
+            </AccordionItem>
+          </div>
 
           <div className="product-detail-meta">
             <span>SKU: {product.sku}</span>

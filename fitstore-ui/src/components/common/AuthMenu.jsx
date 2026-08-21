@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser, registerUser, clearAuthError, logout } from '../../store/auth/authSlice'
+import { fetchBag, clearCart } from '../../store/cart/cartSlice'
 import './AuthMenu.css'
 
 const EMPTY_FORM = { name: '', email: '', password: '', confirmPassword: '' }
@@ -105,6 +106,7 @@ export default function AuthMenu() {
 
   const handleLogout = () => {
     dispatch(logout())
+    dispatch(clearCart())
     setForm(EMPTY_FORM)
     setMode('login')
     setConfirmingLogout(false)
@@ -128,6 +130,7 @@ export default function AuthMenu() {
     if (result.meta.requestStatus === 'fulfilled') {
       setForm(EMPTY_FORM)
       setOpen(false)
+      dispatch(fetchBag(result.payload.token))
     }
   }
 

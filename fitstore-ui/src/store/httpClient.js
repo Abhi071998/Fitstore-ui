@@ -21,6 +21,7 @@ export function createHttpClient(baseURL) {
   return {
     get: (path, options) => request(path, { ...options, method: 'GET' }),
     post: (path, body, options) => request(path, { ...options, method: 'POST', body }),
+    delete: (path, options) => request(path, { ...options, method: 'DELETE' }),
   }
 }
 
