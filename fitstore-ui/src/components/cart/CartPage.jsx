@@ -211,9 +211,15 @@ export default function CartPage() {
                 </p>
               )}
 
-              <button className="btn-primary cart-checkout" disabled={hasStockIssues}>
-                Proceed to Checkout
-              </button>
+              {hasStockIssues ? (
+                <button className="btn-primary cart-checkout" disabled>
+                  Proceed to Checkout
+                </button>
+              ) : (
+                <Link to="/checkout" className="btn-primary cart-checkout">
+                  Proceed to Checkout
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -152,7 +152,14 @@
   line-height: 1.5;
 }
 
-.cart-checkout { width: 100%; margin-top: 20px; padding: 14px; }
+.cart-checkout {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  text-align: center;
+}
+
 .cart-checkout:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .cart-empty {

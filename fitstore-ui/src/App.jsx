@@ -7,6 +7,7 @@ import CategoriesPage from './components/categories/CategoriesPage.jsx'
 import ProductsPage from './components/products/ProductsPage.jsx'
 import ProductDetailPage from './components/products/ProductDetailPage.jsx'
 import CartPage from './components/cart/CartPage.jsx'
+import CheckoutPage from './components/checkout/CheckoutPage.jsx'
 
 function App() {
   const dispatch = useDispatch()
@@ -26,6 +27,7 @@ function App() {
         <Route path="/products/:categoryId" element={<ProductsPage />} />
         <Route path="/products/:categoryId/:productId" element={<ProductDetailPage />} />
         <Route path="/bag" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
     </BrowserRouter>
   )
