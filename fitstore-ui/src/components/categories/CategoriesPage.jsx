@@ -16,7 +16,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="categories-page">
-      <Navbar centerLabel="Back to Shop" centerTo="/" />
+      <Navbar centerLabel="Back to Shop" centerTo="/" showActions />
 
       <section className="section categories-section">
         <div className="section-header">

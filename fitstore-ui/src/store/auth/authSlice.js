@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { registerRequest, loginRequest } from './authAPI'
+import { loadAuth, saveAuth, clearAuth } from './authStorage'
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
@@ -23,9 +24,11 @@ export const loginUser = createAsyncThunk(
   },
 )
 
+const { token: storedToken, user: storedUser } = loadAuth()
+
 const initialState = {
-  user: null,
-  token: null,
+  user: storedUser,
+  token: storedToken,
   status: 'idle', // idle | loading | succeeded | failed
   error: null,
 }
@@ -42,6 +45,7 @@ const authSlice = createSlice({
       state.token = null
       state.status = 'idle'
       state.error = null
+      clearAuth()
     },
   },
   extraReducers: (builder) => {
@@ -54,6 +58,7 @@ const authSlice = createSlice({
         state.status = 'succeeded'
         state.user = action.payload.user
         state.token = action.payload.token
+        saveAuth(action.payload)
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed'
@@ -67,6 +72,7 @@ const authSlice = createSlice({
         state.status = 'succeeded'
         state.user = action.payload.user
         state.token = action.payload.token
+        saveAuth(action.payload)
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed'

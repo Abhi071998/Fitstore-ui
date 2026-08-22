@@ -66,7 +66,7 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="categories-page">
-        <Navbar centerLabel={centerLabel} centerTo={centerTo} />
+        <Navbar centerLabel={centerLabel} centerTo={centerTo} showActions />
 
         <section className="section categories-section">
           {status === 'loading' && <p className="categories-status">Loading product…</p>}
@@ -123,7 +123,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="categories-page">
-      <Navbar centerLabel={centerLabel} centerTo={centerTo} />
+      <Navbar centerLabel={centerLabel} centerTo={centerTo} showActions />
 
       <section className="section product-detail">
         <div className="product-detail-gallery">

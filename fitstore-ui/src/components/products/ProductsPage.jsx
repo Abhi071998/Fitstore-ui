@@ -22,7 +22,7 @@ export default function ProductsPage() {
 
   return (
     <div className="categories-page">
-      <Navbar centerLabel="All Categories" centerTo="/categories" />
+      <Navbar centerLabel="All Categories" centerTo="/categories" showActions />
 
       <section className="section categories-section">
         <div className="section-header">
