@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { addBagItemsRequest, getBagRequest, deleteBagItemRequest } from './cartAPI'
+import { updateBagItemQuantity } from './updateBagItemQuantity'
+
+export { updateBagItemQuantity }
 
 export const addToBag = createAsyncThunk(
   'cart/addToBag',
@@ -43,6 +46,8 @@ const initialState = {
   fetchStatus: 'idle',
   removingId: null,
   removeError: null,
+  updatingId: null,
+  updateError: null,
 }
 
 const cartSlice = createSlice({
@@ -52,6 +57,9 @@ const cartSlice = createSlice({
     clearAddError(state) {
       state.addError = null
     },
+    clearUpdateError(state) {
+      state.updateError = null
+    },
     clearCart(state) {
       state.items = []
       state.itemCount = 0
@@ -60,6 +68,8 @@ const cartSlice = createSlice({
       state.fetchStatus = 'idle'
       state.removingId = null
       state.removeError = null
+      state.updatingId = null
+      state.updateError = null
     },
   },
   extraReducers: (builder) => {
@@ -100,8 +110,19 @@ const cartSlice = createSlice({
         state.removingId = null
         state.removeError = action.payload
       })
+      .addCase(updateBagItemQuantity.pending, (state, action) => {
+        state.updatingId = action.meta.arg.id
+        state.updateError = null
+      })
+      .addCase(updateBagItemQuantity.fulfilled, (state) => {
+        state.updatingId = null
+      })
+      .addCase(updateBagItemQuantity.rejected, (state, action) => {
+        state.updatingId = null
+        state.updateError = action.payload
+      })
   },
 })
 
-export const { clearAddError, clearCart } = cartSlice.actions
+export const { clearAddError, clearUpdateError, clearCart } = cartSlice.actions
 export default cartSlice.reducer
