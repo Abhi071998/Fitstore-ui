@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchBag } from '../../store/cart/cartSlice'
+import { placeOrder, clearOrderError } from '../../store/orders/ordersSlice'
 import Navbar from '../common/Navbar.jsx'
 import '../pages/Landing.css'
 import '../categories/CategoriesPage.css'
@@ -14,6 +15,7 @@ export default function CheckoutPage() {
   const token = useSelector((state) => state.auth.token)
   const user = useSelector((state) => state.auth.user)
   const { items, fetchStatus } = useSelector((state) => state.cart)
+  const { status: orderStatus, error: orderError, lastOrder } = useSelector((state) => state.orders)
 
   const [form, setForm] = useState({
     name: user?.name || '',
@@ -32,18 +34,54 @@ export default function CheckoutPage() {
     dispatch(fetchBag(token))
   }, [dispatch, navigate, token])
 
-  // Nothing to check out with an empty bag — send them back rather than
-  // showing a shipping form for zero items.
+  // Nothing to check out with an empty bag — send them back rather than showing
+  // a shipping form for zero items. Skipped once an order's just been placed,
+  // since placing one also empties the bag and we want the confirmation to stay.
   useEffect(() => {
+    if (orderStatus === 'succeeded') return
     if (fetchStatus === 'succeeded' && items.length === 0) {
       navigate('/bag')
     }
-  }, [fetchStatus, items.length, navigate])
+  }, [fetchStatus, items.length, navigate, orderStatus])
 
   if (!token) return null
 
   const updateField = (field) => (e) => {
+    if (orderError) dispatch(clearOrderError())
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
+  }
+
+  const submitting = orderStatus === 'loading'
+
+  const handlePlaceOrder = async () => {
+    if (submitting) return
+    const result = await dispatch(placeOrder({ payload: form, token }))
+    if (result.meta.requestStatus === 'fulfilled') {
+      dispatch(fetchBag(token))
+    }
+  }
+
+  if (orderStatus === 'succeeded' && lastOrder) {
+    return (
+      <div className="categories-page">
+        <Navbar centerLabel="Continue Shopping" centerTo="/categories" />
+
+        <section className="section checkout-section">
+          <div className="cart-empty">
+            <h3 className="cart-empty-title">Order Placed!</h3>
+            <p className="cart-empty-desc">
+              Thanks, {lastOrder.shipping_name}. Order #{lastOrder.id} is pending approval.
+              <br />
+              Shipping to {lastOrder.shipping_address}, {lastOrder.shipping_city},{' '}
+              {lastOrder.shipping_state} – {lastOrder.shipping_pincode}
+            </p>
+            <div className="cart-empty-actions">
+              <Link to="/categories" className="btn-primary">Continue Shopping</Link>
+            </div>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   const totalItems = items.reduce((sum, row) => sum + row.quantity, 0)
@@ -76,7 +114,13 @@ export default function CheckoutPage() {
 
         {fetchStatus === 'succeeded' && items.length > 0 && (
           <div className="cart-layout">
-            <form className="checkout-form card" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="checkout-form card"
+              onSubmit={(e) => {
+                e.preventDefault()
+                handlePlaceOrder()
+              }}
+            >
               <h3 className="checkout-form-title">Shipping Details</h3>
 
               <label className="checkout-field">
@@ -116,6 +160,12 @@ export default function CheckoutPage() {
                   <input type="text" value={form.pincode} onChange={updateField('pincode')} required />
                 </label>
               </div>
+
+              {orderError && (
+                <p className="cart-item-stock-warning">
+                  {orderError.message || 'Something went wrong placing your order.'}
+                </p>
+              )}
             </form>
 
             <div className="cart-summary card">
@@ -138,8 +188,13 @@ export default function CheckoutPage() {
                 <span>₹{total.toFixed(0)}</span>
               </div>
 
-              <button type="button" className="btn-primary cart-checkout">
-                Place Order
+              <button
+                type="button"
+                className="btn-primary cart-checkout"
+                disabled={submitting}
+                onClick={handlePlaceOrder}
+              >
+                {submitting ? 'Placing Order…' : 'Place Order'}
               </button>
 
               <Link to="/bag" className="checkout-back-link">← Back to Bag</Link>
