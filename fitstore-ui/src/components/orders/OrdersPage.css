@@ -1,0 +1,75 @@
+.orders-list { display: flex; flex-direction: column; gap: 20px; max-width: 820px; }
+
+.order-card { padding: 24px; }
+
+.order-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-card-heading { display: flex; flex-direction: column; gap: 4px; }
+
+.order-card-id {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--fg);
+}
+
+.order-card-date { font-size: 12px; color: var(--fg-muted); }
+
+.order-card-items { display: flex; flex-direction: column; gap: 14px; }
+
+.order-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.order-item-cancelled { opacity: 0.55; }
+
+.order-item-image {
+  width: 56px;
+  height: 68px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface2);
+}
+
+.order-item-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.order-item-body { display: flex; flex-direction: column; gap: 6px; }
+
+.order-item-name { font-size: 14px; color: var(--fg); }
+
+.order-item-cancelled .order-item-name { text-decoration: line-through; }
+
+.order-item-price { font-size: 14px; font-weight: 600; color: var(--fg); }
+
+.order-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.order-card-shipping p { font-size: 13px; color: var(--fg-muted); margin-top: 4px; max-width: 420px; }
+
+.order-card-total { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+.order-card-total-value { font-size: 18px; font-weight: 600; color: var(--fg); }
+
+@media (max-width: 560px) {
+  .order-card { padding: 18px; }
+  .order-item { grid-template-columns: 48px 1fr; }
+  .order-item-price { grid-column: 1 / -1; text-align: right; }
+  .order-card-footer { flex-direction: column; align-items: flex-start; }
+  .order-card-total { align-items: flex-start; }
+}
