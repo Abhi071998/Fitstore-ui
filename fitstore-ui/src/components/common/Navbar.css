@@ -42,6 +42,8 @@
 
 .navbar-actions { display: flex; align-items: center; gap: 12px; }
 
+.navbar-about-link { margin-right: 4px; }
+
 @media (max-width: 1000px) {
   .navbar { padding: 0 20px; height: 72px; }
   .navbar-logo { font-size: 22px; }

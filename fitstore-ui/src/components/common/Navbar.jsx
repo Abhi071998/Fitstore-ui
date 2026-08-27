@@ -28,6 +28,7 @@ export default function Navbar({ centerLabel, centerTo, showActions = false }) {
 
       {showActions && (
         <div className="navbar-actions">
+          <Link to="/about" className="auth-link navbar-about-link">About Us</Link>
           <AuthMenu />
           {user && (
             <Link to="/orders" className="btn-icon" aria-label="My Orders">

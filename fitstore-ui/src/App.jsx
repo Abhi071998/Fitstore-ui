@@ -9,6 +9,7 @@ import ProductDetailPage from './components/products/ProductDetailPage.jsx'
 import CartPage from './components/cart/CartPage.jsx'
 import CheckoutPage from './components/checkout/CheckoutPage.jsx'
 import OrdersPage from './components/orders/OrdersPage.jsx'
+import AboutPage from './components/about/AboutPage.jsx'
 
 function App() {
   const dispatch = useDispatch()
@@ -30,6 +31,7 @@ function App() {
         <Route path="/bag" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </BrowserRouter>
   )

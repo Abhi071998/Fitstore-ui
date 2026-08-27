@@ -1,0 +1,90 @@
+/* ── Hero ── */
+.about-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.about-hero-image {
+  height: 520px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface2);
+}
+
+.about-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.92);
+}
+
+.about-hero-content { display: flex; flex-direction: column; gap: 24px; }
+
+.about-hero-title { font-size: clamp(32px, 4vw, 56px); }
+
+.about-hero-desc {
+  max-width: 440px;
+  font-size: 14px;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ── Taglines strip ── */
+.about-taglines {
+  background: var(--accent);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+}
+
+.about-tagline-item {
+  padding: 40px 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s;
+}
+.about-tagline-item:last-child { border-right: none; }
+.about-tagline-item:hover { background: rgba(255, 255, 255, 0.06); }
+
+.about-tagline-text {
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--white);
+}
+
+/* ── Contact ── */
+.about-contact-section { padding-top: 72px; padding-bottom: 72px; }
+
+.about-contact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 40px 0;
+}
+
+.about-contact-item {
+  padding: 0 40px;
+  border-right: 1px solid var(--border);
+}
+.about-contact-item:last-child { border-right: none; }
+
+.about-contact-item p { color: var(--fg); font-size: 14px; line-height: 1.6; margin-top: 8px; }
+.about-contact-item a { color: var(--accent); }
+.about-contact-item a:hover { color: var(--accent-warm); }
+
+/* ── Responsive ── */
+@media (max-width: 1000px) {
+  .about-hero { grid-template-columns: 1fr; gap: 32px; }
+  .about-hero-image { height: 320px; order: -1; }
+  .about-hero-desc { max-width: none; }
+
+  .about-taglines { grid-template-columns: repeat(2, 1fr); }
+  .about-tagline-item:nth-child(2) { border-right: none; }
+  .about-tagline-item:nth-child(3) { border-right: 1px solid rgba(255, 255, 255, 0.15); }
+
+  .about-contact { grid-template-columns: 1fr; gap: 24px; padding: 32px 24px; }
+  .about-contact-item { padding: 0 0 20px; border-right: none; border-bottom: 1px solid var(--border); }
+  .about-contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+}
