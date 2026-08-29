@@ -1,72 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { fetchCategories } from '../../store/categories/categoriesSlice'
 import Navbar from '../common/Navbar.jsx'
+import '../categories/CategoriesPage.css'
 import './Landing.css'
-
-const PRODUCTS = [
-  {
-    id: 1,
-    name: 'Momentum Leggings',
-    category: 'Leggings',
-    tag: 'New Season',
-    price: '$68',
-    orig: '$85',
-    img: 'https://loremflickr.com/600/800/leggings,fitness?lock=11',
-  },
-  {
-    id: 2,
-    name: 'ThermoFlex Training Jacket',
-    category: 'Outerwear',
-    tag: 'Bestseller',
-    price: '$128',
-    orig: null,
-    img: 'https://loremflickr.com/600/800/jacket,mens?lock=12',
-  },
-  {
-    id: 3,
-    name: 'Core Compression Tee',
-    category: 'Tops',
-    tag: 'Limited',
-    price: '$42',
-    orig: '$52',
-    img: 'https://loremflickr.com/600/800/tshirt,mens?lock=13',
-  },
-  {
-    id: 4,
-    name: 'Signature Graphic Shirt',
-    category: 'Shirts',
-    tag: 'New',
-    price: '$38',
-    orig: null,
-    img: 'https://loremflickr.com/600/800/shirt,fashion?lock=14',
-  },
-  {
-    id: 5,
-    name: 'Endurance Joggers',
-    category: 'Bottoms',
-    tag: 'Classic',
-    price: '$74',
-    orig: '$92',
-    img: 'https://loremflickr.com/600/800/joggers,pants?lock=15',
-  },
-  {
-    id: 6,
-    name: 'Recovery Zip Hoodie',
-    category: 'Knitwear',
-    tag: 'New In',
-    price: '$96',
-    orig: null,
-    img: 'https://loremflickr.com/600/800/hoodie?lock=16',
-  },
-  {
-    id: 7,
-    name: 'Classic Fit Tee',
-    category: 'Tops',
-    tag: 'Limited',
-    price: '$36',
-    orig: '$45',
-    img: 'https://loremflickr.com/600/800/tshirt,plain?lock=17',
-  },
-]
 
 const MARQUEE_ITEMS = [
   'Free shipping over $75',
@@ -85,10 +23,17 @@ const FEATURES = [
 ]
 
 export default function Landing() {
+  const dispatch = useDispatch()
+  const { items: categories, status: categoriesStatus, error: categoriesError } = useSelector(
+    (state) => state.categories,
+  )
   const [slide, setSlide] = useState(0)
-  const [likes, setLikes] = useState({})
   const [step, setStep] = useState({ offset: 0, visible: 3 })
   const trackRef = useRef(null)
+
+  useEffect(() => {
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   // Card width/visible-count vary per breakpoint (CSS controls the sizing),
   // so measure the rendered card rather than assuming a fixed percentage —
@@ -110,9 +55,9 @@ export default function Landing() {
     const observer = new ResizeObserver(measure)
     observer.observe(track)
     return () => observer.disconnect()
-  }, [])
+  }, [categories.length])
 
-  const maxSlide = Math.max(0, PRODUCTS.length - step.visible)
+  const maxSlide = Math.max(0, categories.length - step.visible)
 
   // Clamp the current slide when a resize shrinks the visible count
   // (e.g. rotating from a 3-up desktop layout to a 1-up mobile one).
@@ -122,8 +67,6 @@ export default function Landing() {
 
   const prev = () => setSlide((s) => Math.max(0, s - 1))
   const next = () => setSlide((s) => Math.min(maxSlide, s + 1))
-
-  const toggleLike = (id) => setLikes((prev) => ({ ...prev, [id]: !prev[id] }))
 
   return (
     <div className="landing">
@@ -197,60 +140,76 @@ export default function Landing() {
           <div>
             <div className="eyebrow">Curated for you</div>
             <h2 className="section-title">
-              Featured<br /><em>Gear</em>
+              Shop by<br /><em>Category</em>
             </h2>
           </div>
-          <div className="slider-controls">
-            <button className="btn-icon" onClick={prev} disabled={slide === 0} aria-label="Previous">←</button>
-            <button className="btn-icon" onClick={next} disabled={slide >= maxSlide} aria-label="Next">→</button>
-          </div>
+          {categoriesStatus === 'succeeded' && categories.length > 0 && (
+            <div className="slider-controls">
+              <button className="btn-icon" onClick={prev} disabled={slide === 0} aria-label="Previous">←</button>
+              <button className="btn-icon" onClick={next} disabled={slide >= maxSlide} aria-label="Next">→</button>
+            </div>
+          )}
         </div>
 
-        <div className="slider-wrapper">
-          <div
-            ref={trackRef}
-            className="slider-track"
-            style={{ transform: `translateX(-${slide * step.offset}px)` }}
-          >
-            {PRODUCTS.map((product) => (
-              <div key={product.id} className="product-card card">
-                <div className="card-image-wrap">
-                  <img src={product.img} alt={product.name} />
-                  <span className="tag tag-warm card-tag">{product.tag}</span>
-                  <button
-                    className="card-wishlist"
-                    onClick={() => toggleLike(product.id)}
-                    aria-label="Wishlist"
+        {categoriesStatus === 'loading' && <p className="categories-status">Loading categories…</p>}
+
+        {categoriesStatus === 'failed' && (
+          <div className="categories-status">
+            <p>{categoriesError || 'Something went wrong loading categories.'}</p>
+            <button className="btn-outline btn-sm" onClick={() => dispatch(fetchCategories())}>
+              Retry
+            </button>
+          </div>
+        )}
+
+        {categoriesStatus === 'succeeded' && categories.length === 0 && (
+          <p className="categories-status">No categories available yet.</p>
+        )}
+
+        {categoriesStatus === 'succeeded' && categories.length > 0 && (
+          <>
+            <div className="slider-wrapper">
+              <div
+                ref={trackRef}
+                className="slider-track"
+                style={{ transform: `translateX(-${slide * step.offset}px)` }}
+              >
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/products/${category.id}`}
+                    state={{ categoryName: category.name }}
+                    className="product-card card"
                   >
-                    {likes[product.id] ? '♥' : '♡'}
-                  </button>
-                </div>
-                <div className="card-body">
-                  <div className="card-category label">{product.category}</div>
-                  <h3 className="card-name">{product.name}</h3>
-                  <div className="card-footer">
-                    <div>
-                      <span className="card-price">{product.price}</span>
-                      {product.orig && <span className="card-price-orig">{product.orig}</span>}
+                    <div className="card-image-wrap">
+                      {category.image_url ? (
+                        <img src={category.image_url} alt={category.name} />
+                      ) : (
+                        <div className="category-card-placeholder font-display">
+                          {category.name.charAt(0)}
+                        </div>
+                      )}
                     </div>
-                    <button className="btn-subtle btn-sm">Add</button>
-                  </div>
-                </div>
+                    <div className="card-body">
+                      <h3 className="card-name">{category.name}</h3>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="slider-dots">
-          {Array.from({ length: maxSlide + 1 }).map((_, i) => (
-            <button
-              key={i}
-              className={`dot${slide === i ? ' active' : ''}`}
-              onClick={() => setSlide(i)}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
+            <div className="slider-dots">
+              {Array.from({ length: maxSlide + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  className={`dot${slide === i ? ' active' : ''}`}
+                  onClick={() => setSlide(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* ── Features strip ── */}
