@@ -157,8 +157,17 @@
 }
 
 @media (max-width: 560px) {
-  .auth-links { gap: 6px; }
+  .auth-wrap { min-width: 0; max-width: 118px; }
+  .auth-links { min-width: 0; gap: 5px; }
   .auth-link, .auth-greeting { font-size: 11px; }
+
+  .auth-greeting {
+    min-width: 0;
+    max-width: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   /* Anchoring to auth-wrap overflows off-screen on narrow layouts since the
      trigger sits far right, next to the Bag button — pin to the viewport instead. */

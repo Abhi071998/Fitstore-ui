@@ -53,26 +53,32 @@
 
 @media (max-width: 560px) {
   .navbar {
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     height: auto;
-    min-height: 64px;
     padding: 12px 16px;
-    row-gap: 10px;
+    row-gap: 8px;
   }
 
   .navbar-logo { font-size: 18px; }
   .navbar-logo span { font-size: 9px; }
 
   .navbar-category {
-    order: 3;
-    flex-basis: 100%;
-    text-align: center;
-    font-size: 14px;
+    text-align: right;
+    white-space: nowrap;
+    font-size: 12px;
   }
 
-  .navbar-actions { gap: 8px; }
+  .navbar-actions {
+    grid-column: 1 / -1;
+    min-width: 0;
+    justify-content: space-between;
+    gap: 6px;
+  }
 
-  .btn-outline { padding: 8px 14px; font-size: 10px; }
+  .navbar-about-link { font-size: 10px; }
+
+  .navbar-actions .btn-icon { width: 36px; height: 36px; }
+
+  .navbar-actions .btn-outline { padding: 8px 10px; font-size: 10px; white-space: nowrap; }
 }
