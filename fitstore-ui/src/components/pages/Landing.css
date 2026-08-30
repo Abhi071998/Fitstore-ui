@@ -297,4 +297,8 @@
 
 @media (max-width: 560px) {
   .hero { padding-top: 118px; }
+
+  .hero-cta { gap: 8px; }
+  .hero-cta .btn-primary { padding: 12px 16px; }
+  .hero-cta button { white-space: nowrap; }
 }
