@@ -1,18 +1,40 @@
-# React + Vite
+# FITstore
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The storefront frontend for FITstore — a React + Redux Toolkit e-commerce UI for browsing categories/products, cart, checkout, order history, and an About Us page. Built with Vite.
 
-Currently, two official plugins are available:
+## Backend repos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [FitStore-core](https://github.com/Abhi071998/FitStore-core) — auth, categories, products, cart, orders
+- [Fitstore-engine](https://github.com/Abhi071998/Fitstore-engine) — content service (About Us page)
 
-## React Compiler
+## Installation
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```bash
+git clone https://github.com/Abhi071998/Fitstore-ui.git
+cd Fitstore-ui/fitstore-ui
+npm install
+cp .env.example .env   # fill in your backend URLs
+npm run dev              # start the dev server
+npm run build             # production build to dist/
+npm run preview            # preview the production build locally
+```
 
-Note: This will impact Vite dev & build performances.
+## Environment variables
 
-## Expanding the ESLint configuration
+Set these in `.env` (see `.env.example`):
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Variable | Purpose |
+|---|---|
+| `VITE_API_BASE_URL` | FitStore-core base URL — auth, categories, products, orders |
+| `VITE_CART_API_BASE_URL` | FitStore-core base URL for cart/bag endpoints |
+| `VITE_FITSTORE_ENGINE_BASE_URL` | Fitstore-engine base URL — About Us page content |
+| `VITE_AUTH_TOKEN_STORAGE_KEY` | localStorage key the JWT is persisted under |
+| `VITE_AUTH_USER_STORAGE_KEY` | localStorage key the logged-in user object is persisted under |
+
+Production values:
+
+```
+VITE_API_BASE_URL=https://fitstore-core.onrender.com
+VITE_CART_API_BASE_URL=https://fitstore-core.onrender.com
+VITE_FITSTORE_ENGINE_BASE_URL=https://fitstore-engine.onrender.com
+```

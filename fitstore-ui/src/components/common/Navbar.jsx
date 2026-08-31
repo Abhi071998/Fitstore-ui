@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import AuthMenu from './AuthMenu.jsx'
@@ -13,12 +14,42 @@ function OrdersIcon() {
   )
 }
 
+function MenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
 export default function Navbar({ centerLabel, centerTo, showActions = false }) {
   const itemCount = useSelector((state) => state.cart.itemCount)
   const user = useSelector((state) => state.auth.user)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navRef = useRef(null)
+
+  // Close the mobile actions menu on outside click.
+  useEffect(() => {
+    if (!menuOpen) return
+    const onClick = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onClick)
+    return () => document.removeEventListener('mousedown', onClick)
+  }, [menuOpen])
+
+  const closeMenu = () => setMenuOpen(false)
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" ref={navRef}>
       <Link to="/" className="navbar-logo font-display">
         FITstore
         <span>Performance Edit</span>
@@ -27,16 +58,28 @@ export default function Navbar({ centerLabel, centerTo, showActions = false }) {
       <Link to={centerTo} className="navbar-category font-display">{centerLabel}</Link>
 
       {showActions && (
-        <div className="navbar-actions">
-          <Link to="/about" className="auth-link navbar-about-link">About Us</Link>
-          <AuthMenu />
-          {user && (
-            <Link to="/orders" className="btn-icon" aria-label="My Orders">
-              <OrdersIcon />
-            </Link>
-          )}
-          <Link to="/bag" className="btn-outline">Bag ({itemCount})</Link>
-        </div>
+        <>
+          <button
+            type="button"
+            className="navbar-menu-toggle"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+
+          <div className={`navbar-actions${menuOpen ? ' open' : ''}`}>
+            <Link to="/about" className="auth-link navbar-about-link" onClick={closeMenu}>About Us</Link>
+            <AuthMenu />
+            {user && (
+              <Link to="/orders" className="btn-icon" aria-label="My Orders" onClick={closeMenu}>
+                <OrdersIcon />
+              </Link>
+            )}
+            <Link to="/bag" className="btn-outline" onClick={closeMenu}>Bag ({itemCount})</Link>
+          </div>
+        </>
       )}
     </nav>
   )

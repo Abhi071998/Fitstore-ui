@@ -1,6 +1,10 @@
 .categories-page { min-height: 100vh; }
 
-.categories-page .navbar { position: static; }
+/* position:relative (not static) so the fixed-navbar's mobile dropdown
+   (position:absolute, anchored to .navbar) still gets a proper containing
+   block here — static would leave it with no reliable positioning context,
+   which breaks its stacking order relative to this page's own content. */
+.categories-page .navbar { position: relative; }
 
 .categories-title { white-space: nowrap; }
 
