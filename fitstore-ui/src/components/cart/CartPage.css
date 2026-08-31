@@ -274,6 +274,7 @@
   .cart-summary { position: static; }
 
   .cart-item { grid-template-columns: 80px 1fr; }
+  .cart-item-image { width: 100%; }
   .cart-item-price {
     grid-column: 1 / -1;
     flex-direction: row;
