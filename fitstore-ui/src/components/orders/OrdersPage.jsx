@@ -136,6 +136,13 @@ export default function OrdersPage() {
                   })}
                 </div>
 
+                {order.admin_comment && (
+                  <div className="order-card-comment">
+                    <span className="label">Note from FITstore</span>
+                    <p>{order.admin_comment}</p>
+                  </div>
+                )}
+
                 <div className="order-card-footer">
                   <div className="order-card-shipping">
                     <span className="label">Shipping to</span>

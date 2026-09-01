@@ -9,6 +9,15 @@ import '../categories/CategoriesPage.css'
 import '../cart/CartPage.css'
 import './CheckoutPage.css'
 
+function Spinner() {
+  return (
+    <svg className="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.25" />
+      <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export default function CheckoutPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -194,8 +203,21 @@ export default function CheckoutPage() {
                 disabled={submitting}
                 onClick={handlePlaceOrder}
               >
-                {submitting ? 'Placing Order…' : 'Place Order'}
+                {submitting ? (
+                  <>
+                    <Spinner />
+                    Placing Order…
+                  </>
+                ) : (
+                  'Place Order'
+                )}
               </button>
+
+              {submitting && (
+                <p className="checkout-submitting-hint">
+                  This can take up to a couple of minutes — please don't refresh or close this page.
+                </p>
+              )}
 
               <Link to="/bag" className="checkout-back-link">← Back to Bag</Link>
             </div>

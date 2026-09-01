@@ -50,6 +50,17 @@
 
 .order-item-price { font-size: 14px; font-weight: 600; color: var(--fg); }
 
+.order-card-comment {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: rgba(200, 57, 42, 0.06);
+  border-left: 2px solid var(--danger);
+  border-radius: var(--radius);
+}
+
+.order-card-comment .label { color: var(--danger); }
+.order-card-comment p { font-size: 13px; color: var(--fg); line-height: 1.5; margin-top: 4px; }
+
 .order-card-footer {
   display: flex;
   align-items: flex-end;
