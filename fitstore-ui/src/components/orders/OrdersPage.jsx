@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchOrders } from '../../store/orders/ordersSlice'
@@ -15,6 +15,14 @@ function PackageIcon() {
       <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z" />
       <path d="M3.3 7 12 12l8.7-5" />
       <path d="M12 22V12" />
+    </svg>
+  )
+}
+
+function ChevronIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m6 9 6 6 6-6" />
     </svg>
   )
 }
@@ -47,6 +55,16 @@ export default function OrdersPage() {
   const navigate = useNavigate()
   const token = useSelector((state) => state.auth.token)
   const { list: orders, listStatus, listError } = useSelector((state) => state.orders)
+  const [openIds, setOpenIds] = useState(() => new Set())
+
+  const toggleOrder = (id) => {
+    setOpenIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!token) {
@@ -93,71 +111,95 @@ export default function OrdersPage() {
 
         {listStatus === 'succeeded' && orders.length > 0 && (
           <div className="orders-list">
-            {orders.map((order) => (
-              <div key={order.id} className="order-card card">
-                <div className="order-card-header">
-                  <div className="order-card-heading">
-                    <span className="order-card-id">Order #{order.id}</span>
-                    <span className="order-card-date">{formatDate(order.created_at)}</span>
-                  </div>
-                  <span className={`tag ${statusTagClass(order.status)}`}>{formatStatus(order.status)}</span>
-                </div>
+            {orders.map((order) => {
+              const isOpen = openIds.has(order.id)
+              const activeItems = order.order_items.filter((item) => item.status !== 'cancelled')
+              const itemCount = activeItems.reduce((sum, item) => sum + item.quantity, 0)
 
-                <div className="order-card-items">
-                  {order.order_items.map((item) => {
-                    const image = firstImage(item.product)
-                    const cancelled = item.status === 'cancelled'
-                    return (
-                      <div key={item.id} className={`order-item${cancelled ? ' order-item-cancelled' : ''}`}>
-                        <div className="order-item-image">
-                          {image ? (
-                            <img src={image} alt={item.product.name} />
-                          ) : (
-                            <div className="category-card-placeholder font-display">
-                              {item.product.name.charAt(0)}
+              return (
+                <div key={order.id} className="order-card card">
+                  <button
+                    type="button"
+                    className="order-card-header"
+                    onClick={() => toggleOrder(order.id)}
+                    aria-expanded={isOpen}
+                  >
+                    <div className="order-card-heading">
+                      <span className="order-card-id">Order #{order.id}</span>
+                      <span className="order-card-date">{formatDate(order.created_at)}</span>
+                    </div>
+
+                    <div className="order-card-header-right">
+                      <span className={`tag ${statusTagClass(order.status)}`}>{formatStatus(order.status)}</span>
+                      <span className="order-card-summary">
+                        {itemCount} item{itemCount === 1 ? '' : 's'} · ₹{Number(order.total).toFixed(0)}
+                      </span>
+                      <span className={`order-card-chevron${isOpen ? ' open' : ''}`}>
+                        <ChevronIcon />
+                      </span>
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="order-card-body">
+                      <div className="order-card-items">
+                        {order.order_items.map((item) => {
+                          const image = firstImage(item.product)
+                          const cancelled = item.status === 'cancelled'
+                          return (
+                            <div key={item.id} className={`order-item${cancelled ? ' order-item-cancelled' : ''}`}>
+                              <div className="order-item-image">
+                                {image ? (
+                                  <img src={image} alt={item.product.name} />
+                                ) : (
+                                  <div className="category-card-placeholder font-display">
+                                    {item.product.name.charAt(0)}
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="order-item-body">
+                                <span className="order-item-name">{item.product.name}</span>
+                                <div className="cart-item-meta">
+                                  <span className="tag">Size {item.size}</span>
+                                  <span className="cart-item-qty">Qty {item.quantity}</span>
+                                  {cancelled && <span className="tag tag-danger">Cancelled</span>}
+                                </div>
+                              </div>
+
+                              <div className="order-item-price">
+                                ₹{(Number(item.unit_price) * item.quantity).toFixed(0)}
+                              </div>
                             </div>
-                          )}
-                        </div>
+                          )
+                        })}
+                      </div>
 
-                        <div className="order-item-body">
-                          <span className="order-item-name">{item.product.name}</span>
-                          <div className="cart-item-meta">
-                            <span className="tag">Size {item.size}</span>
-                            <span className="cart-item-qty">Qty {item.quantity}</span>
-                            {cancelled && <span className="tag tag-danger">Cancelled</span>}
-                          </div>
+                      {order.admin_comment && (
+                        <div className="order-card-comment">
+                          <span className="label">Note from FITstore</span>
+                          <p>{order.admin_comment}</p>
                         </div>
+                      )}
 
-                        <div className="order-item-price">
-                          ₹{(Number(item.unit_price) * item.quantity).toFixed(0)}
+                      <div className="order-card-footer">
+                        <div className="order-card-shipping">
+                          <span className="label">Shipping to</span>
+                          <p>
+                            {order.shipping_address}, {order.shipping_city}, {order.shipping_state} –{' '}
+                            {order.shipping_pincode}
+                          </p>
+                        </div>
+                        <div className="order-card-total">
+                          <span className="label">Total</span>
+                          <span className="order-card-total-value">₹{Number(order.total).toFixed(0)}</span>
                         </div>
                       </div>
-                    )
-                  })}
+                    </div>
+                  )}
                 </div>
-
-                {order.admin_comment && (
-                  <div className="order-card-comment">
-                    <span className="label">Note from FITstore</span>
-                    <p>{order.admin_comment}</p>
-                  </div>
-                )}
-
-                <div className="order-card-footer">
-                  <div className="order-card-shipping">
-                    <span className="label">Shipping to</span>
-                    <p>
-                      {order.shipping_address}, {order.shipping_city}, {order.shipping_state} –{' '}
-                      {order.shipping_pincode}
-                    </p>
-                  </div>
-                  <div className="order-card-total">
-                    <span className="label">Total</span>
-                    <span className="order-card-total-value">₹{Number(order.total).toFixed(0)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </section>
